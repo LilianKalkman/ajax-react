@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Post from '../../components/Post/Post';
+import FullPost from '../FullPost/FullPost';
 import './Posts.css';
-import { Link } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
 class Posts extends Component {
   state = {
-    posts: [],
-    selectedPost: null
+    posts: []
   }
     componentDidMount(){
       axios.get('https://jsonplaceholder.typicode.com/posts').then(response => {
@@ -21,24 +21,25 @@ class Posts extends Component {
     }
 
     selectedPostIdHandler = (id) => {
-      this.setState({selectedPost: id});
+      this.props.history.push(this.props.match.url + '/' + id);
     }
 
     render () {
       const posts = this.state.posts.map( post => {
       return (
-        <Link to={`/${post.id}`}key={post.id}>
           <Post
+          key={post.id}
           title={post.title}
           author={post.author}
-          clicked={() => this.selectedPostIdHandler(post.id)}/>
-        </Link>
+          clicked={() => this.selectedPostIdHandler(post.id)}
+          />
       );
     });
 
         return (
               <section className="Posts">
                 {posts}
+                <Route path={this.props.match.url + '/:id'} component={FullPost}/>
               </section>
         );
     }
